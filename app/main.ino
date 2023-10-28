@@ -53,7 +53,10 @@ uint16_t ReadADC(uint8_t channel){
 int main(void){
 	DDRD |= (1 << 2) | (1 << 3) | (1 << 7);//d2 d3 d7
 	DDRD |= (1 << 4) | (1 << 5) | (1 << 6);//d4 d5 d6
-	DDRB |= (1 << 0) | (1 << 3) | (1 << 4);//d8 d11 d12
+	DDRB |= (1 << 2) | (1 << 3) | (1 << 4);//d10 d11 d12
+	DDRB |= (1 << 1);//d9
+	DDRC |= (1 << 0) | (1 << 1) | (1 << 2);//a0 a1 a2
+	DDRC |= (1 << 3) | (1 << 4);//a3 a5
 	PORTD |= (1 << 6) | (1 << 7);//direita
 	PORTD |= (1 << 3) | (1 << 4);//esquerda
 	InitADC();
