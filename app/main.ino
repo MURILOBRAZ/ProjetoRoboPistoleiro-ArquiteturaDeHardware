@@ -2,7 +2,6 @@
 
 
 int valorADC0 = 0;
-int valorADC1 = 0;
 int valorMapeado0 = 0;
 int valorMapeado1 = 0;
 
@@ -63,7 +62,7 @@ int main(void){
 	Serial.begin(9600);
 	while(1){
 		
-		Serial.println(valorADC0);
+		
 		
 	}
 
