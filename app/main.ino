@@ -13,6 +13,10 @@ ISR(TIMER0_OVF_vect){
     OCR2B = valorMapeado0;
 }
 
+ISR(TIMER1_OVF_vect){
+  PORTB ^= (1 << 0);
+}
+
 long map(long x, long in_min, long in_max, long out_min, long out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
@@ -24,6 +28,13 @@ void Init_timer0(){
 	OCR0A = valorMapeado0;
 	TIMSK0 = (1 << TOIE0);
 	sei();
+}
+
+void Init_timer1(){
+  TCCR1A = 0;
+  TCCR1B |= (1 << CS12);
+  TCNT1 = 0;
+  TIMSK1 |= (1 << TOIE1);
 }
 
 void Init_timer2(){
@@ -54,13 +65,14 @@ int main(void){
 	DDRD |= (1 << 2) | (1 << 3) | (1 << 7);//d2 d3 d7
 	DDRD |= (1 << 4) | (1 << 5) | (1 << 6);//d4 d5 d6
 	DDRB |= (1 << 2) | (1 << 3) | (1 << 4);//d10 d11 d12
-	DDRB |= (1 << 1);//d9
+	DDRB |= (1 << 0);//d8
 	DDRC |= (1 << 0) | (1 << 1) | (1 << 2);//a0 a1 a2
 	DDRC |= (1 << 3) | (1 << 4);//a3 a5
 	PORTD |= (1 << 6) | (1 << 7);//direita
 	PORTD |= (1 << 3) | (1 << 4);//esquerda
 	InitADC();
 	Init_timer0();
+	Init_timer1();
     Init_timer2();
 	Serial.begin(9600);
 	while(1){
