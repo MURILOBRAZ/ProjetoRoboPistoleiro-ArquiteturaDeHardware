@@ -77,7 +77,32 @@ int main(void){
 	Serial.begin(9600);
 	while(1){
 		
-		
+		//FRENTE
+    if(PINC & (1 << PINC1)){
+      PORTD |= (1 << 2);//direita
+      OCR0A = 255;
+      OCR2B = 255;
+    }
+    //DIREITA
+    else if(PINC & (1 << PINC2)){
+      OCR0A = 255;
+      OCR2B = 125;
+    }
+    //ESQUERDA
+    else if(PINC & (1 << PINC3)){
+      OCR0A = 125;
+      OCR2B = 255;
+    }
+    //TRÁS
+    else if(PINC & (1 << PINC4)){
+      PORTD &= ~(1 << 2);
+      PORTD &= ~(1 << 4);
+      PORTD |= (1 << 7);//direita
+      PORTD |= (1 << 5);//direita
+    }
+    else{
+    
+    }
 		
 	}
 
