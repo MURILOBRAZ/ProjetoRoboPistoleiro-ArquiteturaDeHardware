@@ -4,7 +4,7 @@
 int valorADC0 = 0;
 int valorMapeado0 = 0;
 int valorMapeado1 = 0;
-
+short cont = 4;
 
 ISR(TIMER0_OVF_vect){
 	valorADC0 = ReadADC(0);
