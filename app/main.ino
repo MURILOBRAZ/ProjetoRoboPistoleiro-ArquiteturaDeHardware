@@ -99,9 +99,12 @@ int main(void){
       PORTD &= ~(1 << 4);
       PORTD |= (1 << 7);//direita
       PORTD |= (1 << 5);//direita
+	  OCR0A = 255;
+      OCR2B = 255;
     }
     else{
-    
+		OCR0A = 255;
+      	OCR2B = 255;
     }
 		
 	}
