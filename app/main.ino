@@ -3,18 +3,42 @@
 
 int valorADC0 = 0;
 int valorMapeado0 = 0;
-int valorMapeado1 = 0;
-short cont = 4;
+short cont = 3;
 
 ISR(TIMER0_OVF_vect){
 	valorADC0 = ReadADC(0);
-	valorMapeado0 = map(valorADC0,0,1023,0,255);
-	OCR0A = valorMapeado0;
-    OCR2B = valorMapeado0;
+  if(valorADC0 > 500){
+    
+    if(cont == 3){
+      PORTB &= ~(1 << 2);
+    }
+    else if(cont == 2){
+      PORTB &= ~(1 << 3);
+    }
+    else{
+      PORTB &= ~(1 << 4);
+      
+    }
+    cont--;
+  }
 }
 
 ISR(TIMER1_OVF_vect){
   PORTB ^= (1 << 0);
+  tempo++;
+  if(cont == 0){
+	if(tempo == 2){
+		OCR0A = 0;
+		cont = 3;
+	}
+	else{
+		OCR0A = 255;
+	}
+
+  }
+  else{
+	tempo = 0;
+  }
 }
 
 long map(long x, long in_min, long in_max, long out_min, long out_max) {
@@ -106,6 +130,7 @@ int main(void){
 		OCR0A = 0;
       	OCR2B = 0;
     }
+	
 		
 	}
 
