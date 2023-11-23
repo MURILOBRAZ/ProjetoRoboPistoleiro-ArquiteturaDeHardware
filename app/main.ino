@@ -103,8 +103,8 @@ int main(void){
       OCR2B = 255;
     }
     else{
-		OCR0A = 255;
-      	OCR2B = 255;
+		OCR0A = 0;
+      	OCR2B = 0;
     }
 		
 	}
