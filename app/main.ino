@@ -1,5 +1,5 @@
 #include <avr/io.h>
-
+#include <avr/interrupt.h>
 
 int valorADC0 = 0;
 int valorMapeado0 = 0;
@@ -7,38 +7,13 @@ short cont = 3;
 
 ISR(TIMER0_OVF_vect){
 	valorADC0 = ReadADC(0);
-  if(valorADC0 > 500){
-    
-    if(cont == 3){
-      PORTB &= ~(1 << 2);
-    }
-    else if(cont == 2){
-      PORTB &= ~(1 << 3);
-    }
-    else{
-      PORTB &= ~(1 << 4);
-      
-    }
-    cont--;
-  }
+  
 }
 
 ISR(TIMER1_OVF_vect){
   PORTB ^= (1 << 0);
   tempo++;
-  if(cont == 0){
-	if(tempo == 2){
-		OCR0A = 0;
-		cont = 3;
-	}
-	else{
-		OCR0A = 255;
-	}
-
-  }
-  else{
-	tempo = 0;
-  }
+  
 }
 
 long map(long x, long in_min, long in_max, long out_min, long out_max) {
@@ -104,33 +79,63 @@ int main(void){
 		//FRENTE
     if(PINC & (1 << PINC1)){
       PORTD |= (1 << 2);//direita
-      OCR0A = 255;
-      OCR2B = 255;
+      OCR0A = 95;
+      OCR2B = 95;
     }
     //DIREITA
     else if(PINC & (1 << PINC2)){
-      OCR0A = 255;
-      OCR2B = 125;
+      OCR0A = 95;
+      OCR2B = 85;
     }
     //ESQUERDA
     else if(PINC & (1 << PINC3)){
-      OCR0A = 125;
-      OCR2B = 255;
+      OCR0A = 85;
+      OCR2B = 95;
     }
     //TRÁS
     else if(PINC & (1 << PINC4)){
       PORTD &= ~(1 << 2);
       PORTD &= ~(1 << 4);
       PORTD |= (1 << 7);//direita
-      PORTD |= (1 << 5);//direita
-	  OCR0A = 255;
+      PORTD |= (1 << 5);
+	    OCR0A = 255;
       OCR2B = 255;
     }
     else{
-		OCR0A = 0;
-      	OCR2B = 0;
+      PORTD &= ~(1 << 7);
+      PORTD &= ~(1 << 5);
+      PORTD |= (1 << 2);//direita
+      PORTD |= (1 << 4);
+		  OCR0A = 0;
+      OCR2B = 0;
     }
-	
+    if(valorADC0 > 500){
+    
+      if(cont == 3){
+        PORTB &= ~(1 << 2);
+      }
+      else if(cont == 2){
+        PORTB &= ~(1 << 3);
+      }
+      else{
+        PORTB &= ~(1 << 4);
+        
+      }
+      cont--;
+    }
+    if(cont == 0){
+      if(tempo == 2){
+        OCR0A = 0;
+        cont = 3;
+      }
+      else{
+        OCR0A = 255;
+      }
+
+    }
+    else{
+      tempo = 0;
+    }
 		
 	}
 
