@@ -16,6 +16,15 @@ ISR(TIMER1_OVF_vect){
   
 }
 
+void NossoD(unsigned int ms) {
+    for (unsigned int i = 0; i < ms; i++) {
+        // Ajuste a contagem para um atraso de aproximadamente 1 milissegundo
+        for (unsigned int j = 0; j < F_CPU / 4000; j++) {
+            asm volatile("nop"); // Operação nula para atraso
+        }
+    }
+}
+
 void Init_timer0(){
 
 	TCCR0A |= (1 << COM0A1) | (1 << WGM01) | (1 << WGM00);
