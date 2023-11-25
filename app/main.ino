@@ -1,10 +1,10 @@
 #include <avr/io.h>
-#include <avr/interrupt.h>
+//#include <avr/interrupt.h>
 
 int valorADC0 = 0;
 int valorMapeado0 = 0;
 short cont = 3;
-
+short tempo = 0;
 ISR(TIMER0_OVF_vect){
 	valorADC0 = ReadADC(0);
   
@@ -65,20 +65,24 @@ int main(void){
 	DDRD |= (1 << 4) | (1 << 5) | (1 << 6);//d4 d5 d6
 	DDRB |= (1 << 2) | (1 << 3) | (1 << 4);//d10 d11 d12
 	DDRB |= (1 << 0);//d8
-	DDRC |= (1 << 0) | (1 << 1) | (1 << 2);//a0 a1 a2
-	DDRC |= (1 << 3) | (1 << 4);//a3 a5
-	PORTD |= (1 << 6) | (1 << 7);//direita
-	PORTD |= (1 << 3) | (1 << 4);//esquerda
+	//DDRC |= (1 << 0) | (1 << 1) | (1 << 2);//a0 a1 a2
+	//DDRC |= (1 << 3) | (1 << 4);//a3 a5
+	PORTD |= (1 << 7);//direita
+	PORTD |= (1 << 4);//esquerda
+	PORTB |= (1 << 2) | (1 << 3) | (1 << 4);
 	InitADC();
 	Init_timer0();
 	Init_timer1();
     Init_timer2();
 	Serial.begin(9600);
 	while(1){
-		
+		Serial.println(valorADC0);
 		//FRENTE
     if(PINC & (1 << PINC1)){
-      PORTD |= (1 << 2);//direita
+	PORTD &= ~(1 << 7);
+      PORTD &= ~(1 << 5);
+	 PORTD |= (1 << 2);//direita
+      PORTD |= (1 << 4);
       OCR0A = 95;
       OCR2B = 95;
     }
@@ -98,8 +102,8 @@ int main(void){
       PORTD &= ~(1 << 4);
       PORTD |= (1 << 7);//direita
       PORTD |= (1 << 5);
-	    OCR0A = 255;
-      OCR2B = 255;
+	    OCR0A = 85;
+      OCR2B = 95;
     }
     else{
       PORTD &= ~(1 << 7);
