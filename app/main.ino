@@ -16,15 +16,11 @@ ISR(TIMER1_OVF_vect){
   
 }
 
-long map(long x, long in_min, long in_max, long out_min, long out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
 void Init_timer0(){
 
 	TCCR0A |= (1 << COM0A1) | (1 << WGM01) | (1 << WGM00);
 	TCCR0B |= (1 << CS00);
-	OCR0A = valorMapeado0;
+	OCR0A = 0;
 	TIMSK0 = (1 << TOIE0);
 	sei();
 }
@@ -65,45 +61,49 @@ int main(void){
 	DDRD |= (1 << 4) | (1 << 5) | (1 << 6);//d4 d5 d6
 	DDRB |= (1 << 2) | (1 << 3) | (1 << 4);//d10 d11 d12
 	DDRB |= (1 << 0);//d8
-	//DDRC |= (1 << 0) | (1 << 1) | (1 << 2);//a0 a1 a2
-	//DDRC |= (1 << 3) | (1 << 4);//a3 a5
-	PORTD |= (1 << 7);//direita
-	PORTD |= (1 << 4);//esquerda
 	PORTB |= (1 << 2) | (1 << 3) | (1 << 4);
 	InitADC();
 	Init_timer0();
 	Init_timer1();
-    Init_timer2();
+  Init_timer2();
 	Serial.begin(9600);
 	while(1){
 		Serial.println(valorADC0);
-		//FRENTE
+		
     if(PINC & (1 << PINC1)){
-	PORTD &= ~(1 << 7);
-      PORTD &= ~(1 << 5);
-	 PORTD |= (1 << 2);//direita
-      PORTD |= (1 << 4);
-      OCR0A = 95;
-      OCR2B = 95;
+	    OCR0A = 255;
+      OCR2B = 0;
     }
-    //DIREITA
+    
     else if(PINC & (1 << PINC2)){
-      OCR0A = 95;
-      OCR2B = 85;
+      PORTD |= (1 << 2);//seta o pino
+      PORTD |= (1 << 4);//seta o pino
+
+      PORTD &= ~(1 << 7);//limpa o pino
+      PORTD &= ~(1 << 5);//limpa o pino
+      OCR0A = 255;
+      OCR2B = 255;
     }
-    //ESQUERDA
+    
     else if(PINC & (1 << PINC3)){
-      OCR0A = 85;
-      OCR2B = 95;
+      PORTD |= (1 << 5);//seta o pino
+    PORTD |= (1 << 7);//seta o pino
+
+    PORTD &= ~(1 << 2);//limpa o pino
+    PORTD &= ~(1 << 4);//limpa o pino
+    // Define o valor do PWM para o motor no Timer0 e Timer2
+    OCR0A = 255;
+    OCR2B = 255;
     }
-    //TRÁS
+    
     else if(PINC & (1 << PINC4)){
-      PORTD &= ~(1 << 2);
-      PORTD &= ~(1 << 4);
-      PORTD |= (1 << 7);//direita
-      PORTD |= (1 << 5);
-	    OCR0A = 85;
-      OCR2B = 95;
+      PORTD |= (1 << 2);//seta o pino
+      PORTD |= (1 << 4);//seta o pino
+
+      PORTD &= ~(1 << 7);//limpa o pino
+      PORTD &= ~(1 << 5);//limpa o pino
+      OCR0A = 255;
+      OCR2B = 255;
     }
     else{
       PORTD &= ~(1 << 7);
@@ -113,34 +113,34 @@ int main(void){
 		  OCR0A = 0;
       OCR2B = 0;
     }
-    if(valorADC0 > 500){
-    
-      if(cont == 3){
-        PORTB &= ~(1 << 2);
-      }
-      else if(cont == 2){
-        PORTB &= ~(1 << 3);
-      }
-      else{
-        PORTB &= ~(1 << 4);
-        
-      }
-      cont--;
-    }
-    if(cont == 0){
-      if(tempo == 2){
-        OCR0A = 0;
-        cont = 3;
-      }
-      else{
-        OCR0A = 255;
-      }
+    if (valorADC0 > 920) {
 
+      // Introduz um atraso antes de prosseguir
+     NossoD(1); // Atraso de 100 milissegundos
+
+      // Verifica e executa ações com base no valor da variável 'cont'
+      if (cont == 3) {
+        PORTB &= ~(1 << 2); // Desativa um dos pinos no PORTB (bit 2)
+      } else if (cont == 2) {
+        PORTB &= ~(1 << 3); // Desativa um dos pinos no PORTB (bit 3)
+      } else if (cont == 1){
+        PORTB &= ~(1 << 4); // Desativa um dos pinos no PORTB (bit 4)
+      }
+      OCR0A = 0;
+      OCR2B = 0;
+      if (tempo == 5) {
+        OCR0A = 0; // Define o valor do PWM para 0 no Timer0
+        cont = 3;  // Reinicializa 'cont' para 3
+      } else {
+        OCR0A = 255; // Define o valor do PWM para o máximo no Timer0
+      }
+      cont--; // Decrementa a variável 'cont'
     }
-    else{
-      tempo = 0;
+    else {
+      tempo = 0; // Reseta 'tempo' se 'cont' não chegou a zero
     }
+    
+  }
 		
-	}
 
 }
